@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const successModal = document.getElementById('success-modal');
   const closeModalBtn = document.getElementById('close-modal');
   const currentDateEl = document.getElementById('current-date');
-  const introScreen = document.getElementById('intro-screen');
+  const introScreen  = document.getElementById('intro-screen');
+  const startScreen  = document.getElementById('start-screen');
   const cardContainer = document.querySelector('.card-container');
+  const bgMusic       = document.getElementById('bg-music');
 
   const card = document.getElementById('love-card');
   const buttonWrapper = document.querySelector('.button-wrapper');
@@ -15,24 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   currentDateEl.innerText = new Date().toLocaleDateString('en-US', options);
 
-  // ── Intro Sequence (Windows 11 OOBE style) ─────────────────────
-  // "Hi"          fades in at 0.4s  (auto via CSS animation)
-  // "Hannah Chelsy" fades in at 1.3s (auto via CSS animation)
-  // Shimmer runs from ~2.1s onwards
-  // Whole intro fades out at 5.0s
-  // Card reveals at 6.2s
-  // ────────────────────────────────────────────────────────────────
+  // ── Start Screen → Intro → Card ────────────────────────────────
+  startScreen.addEventListener('click', () => {
+    // 1. Fade out start screen
+    startScreen.classList.add('fade-out');
 
-  // Fade out intro after shimmer has had a moment to shine
-  setTimeout(() => {
-    introScreen.classList.add('fade-out');
-  }, 2500);
+    setTimeout(() => {
+      startScreen.style.display = 'none';
 
-  // Reveal card after intro is fully gone
-  setTimeout(() => {
-    introScreen.style.display = 'none';
-    cardContainer.classList.add('revealed');
-  }, 3300);
+      // 2. Start intro animations
+      introScreen.classList.add('playing');
+      // 3. Fade out intro after shimmer shines
+      setTimeout(() => {
+        introScreen.classList.add('fade-out');
+      }, 2500);
+
+      // 4. Reveal card
+      setTimeout(() => {
+        introScreen.style.display = 'none';
+        cardContainer.classList.add('revealed');
+      }, 3300);
+
+    }, 1000); // wait for start screen fade
+  }, { once: true });
 
 
   // 1. Generate ambient floating particles (hearts and circles)
@@ -205,6 +212,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       successModal.classList.add('active');
     }, 150);
+
+    // Play background music on repeat
+    bgMusic.loop = true;
+    bgMusic.play().catch(() => {});
   });
 
   // 4. Modal Close Close overlay
